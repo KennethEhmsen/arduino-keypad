@@ -22,10 +22,9 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 */
-
 #include "Keypad.h"
 
-#define ENABLE_TEST
+//#define ENABLE_TEST
 
 /*
  * Constructor - initialise the I/O ports
@@ -113,6 +112,11 @@ static volatile bool process_tick = false;
 
 #define TIMER_PERIOD_MS (50)
 
+void init_timer() {
+  OCR0A = 0xaf;
+  TIMSK0 |= _BV(OCIE0A);
+}
+
 // test code
 void setup() {
   // put your setup code here, to run once:
@@ -135,11 +139,6 @@ void loop() {
     }
   }
   
-}
-
-void init_timer() {
-  OCR0A = 0xaf;
-  TIMSK0 |= _BV(OCIE0A);
 }
 
 SIGNAL(TIMER0_COMPA_vect) {

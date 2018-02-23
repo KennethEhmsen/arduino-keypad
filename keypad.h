@@ -26,6 +26,7 @@
 #ifndef __Keypad_h
 #define __Keypad_h
 
+#include "Arduino.h"
 #include "keypad_io.h"
 
 typedef char *FlatKeymap;
