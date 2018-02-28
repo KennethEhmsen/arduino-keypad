@@ -32,11 +32,14 @@
 Keypad::Keypad(char *keymap, int ncols, int nrows) 
   : _keymap(keymap), _ncols(ncols), _nrows(nrows) {
   ROW_DDR &= ~ROW_MASK; // inputs
-  ROW_PORT = ROW_MASK;  // pullups
+  ROW_PORT |= ROW_MASK;  // pullups
   COL_DDR |= COL_MASK;  // outputs
   COL_PORT |= COL_MASK; // initialise high (inactive)
 }
 
+// scan()
+// Don't call this too often - something in the order of every 50ms works well for debounced readings.
+//
 char Keypad::scan() {
   int res = 0;
   for (int col=0; col<_ncols && !res; col++) {
@@ -44,11 +47,9 @@ char Keypad::scan() {
     COL_PORT |= COL_MASK;
     // drive the colum to test
     COL_PORT &= ~(1<<(COL0_BIT+col));
-/*  Need two NOPs otherwise we can miss the column signal coming back through matrix
- *  This makes entire scan really fast (estimated at approx 60us), so ensure we don't call this scan too often! 
- *  (Every 50ms is about perfect for bounce-free readings)
- */
-    asm(
+    // Need two NOPs otherwise we can miss the column signal coming back through matrix
+    // This makes entire scan really fast (estimated at approx 60us), so ensure we don't call this scan too often! 
+     asm(
       "nop\n"
       "nop\n"
      );
@@ -75,14 +76,11 @@ char Keypad::scan() {
 }
 
 // getkey() returns only new keypresses
+// Return value: The ASCII code for a keypress, or 0 if no new keypress.
 //
 char Keypad::getkey() {
   static char prevkey = 0;
   char key = scan();
-
-  // this is not correct - need to count N scans in agreement?
-  // or a long delay after accepting a valid key?
-  
   if (key != prevkey) {
     prevkey = key;
     return key;
@@ -141,7 +139,7 @@ void loop() {
   
 }
 
-SIGNAL(TIMER0_COMPA_vect) {
+ISR(TIMER0_COMPA_vect) {
   if (++ticks >= TIMER_PERIOD_MS) {
     ticks = 0;
     process_tick = true;
