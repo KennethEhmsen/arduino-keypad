@@ -19,10 +19,11 @@ typedef enum {
 static const char _default_pin[4] = { '1', '2', '3', '4' };
 
 // keymap
-static const char _keymap[3][4] = {
-  { '7', '4', '1', '0' },
-  { '8', '5', '2', 'A' },
-  { '9', '6', '3', 'B' },
+static const char _keymap[4][3] = {
+  { '7', '8', '9' },
+  { '4', '5', '6' },
+  { '1', '2', '3' },
+  { '0', 'A', 'B' }
 };
 
 static State _state = NONE;

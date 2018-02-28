@@ -53,8 +53,6 @@ char Keypad::scan() {
       "nop\n"
       "nop\n"
      );
-    // works better with a 1ms delay here - no need to debounce because it slows down scan just enough, and is still responsive
-    //delay(1);
     // read the row
     byte rows = ROW_PIN & ROW_MASK;
     if (rows != ROW_MASK) {
@@ -64,7 +62,7 @@ char Keypad::scan() {
         // check valid row
         if ((rows & rowmask) == 0) {
           // we have a row: map to key
-          res = _keymap[col*_nrows + row];
+          res = _keymap[row*_ncols + col];
           break;
         }
       }
